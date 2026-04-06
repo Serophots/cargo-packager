@@ -125,6 +125,7 @@ pub fn package(config: &Config) -> crate::Result<Vec<PackageOutput>> {
             format.short_name(),
         )?;
 
+        #[allow(unused_mut)]
         let mut produce_summary: bool = true;
 
         let paths = match format {
