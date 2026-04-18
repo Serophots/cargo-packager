@@ -583,7 +583,8 @@ impl Updater {
                         }
                     } else {
                         log::error!(
-                            "update endpoint did not respond with a successful status code"
+                            "update endpoint did not respond with a successful status code ({})",
+                            res.status()
                         );
                     }
                 }
