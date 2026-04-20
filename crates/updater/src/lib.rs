@@ -267,7 +267,8 @@ pub struct ReleaseManifestPlatform {
     /// Signature for the platform
     pub signature: String,
     /// Update format
-    pub format: UpdateFormat,
+    #[serde(deserialize_with = "custom_serialization::parse_update_format")]
+    pub format: Option<UpdateFormat>,
 }
 
 /// Information about a release data.
@@ -326,12 +327,13 @@ impl RemoteRelease {
     /// The release's update format for the given target.
     pub fn format(&self, target: &str) -> Result<UpdateFormat> {
         match self.data {
-            RemoteReleaseData::Dynamic(ref platform) => Ok(platform.format),
+            RemoteReleaseData::Dynamic(ref platform) => platform
+                .format
+                .ok_or(Error::TargetNotFound(target.to_string())),
             RemoteReleaseData::Static { ref platforms } => platforms
                 .get(target)
-                .map_or(Err(Error::TargetNotFound(target.to_string())), |platform| {
-                    Ok(platform.format)
-                }),
+                .and_then(|platform| platform.format)
+                .ok_or(Error::TargetNotFound(target.to_string())),
         }
     }
 }
