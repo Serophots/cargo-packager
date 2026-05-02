@@ -112,3 +112,17 @@ impl<'de> Deserialize<'de> for RemoteRelease {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::RemoteRelease;
+
+    #[test]
+    fn test() {
+        let res = serde_json::from_str(include_str!("../tests/latest.json")).unwrap();
+        let out = serde_json::from_value::<RemoteRelease>(res);
+
+        dbg!(&out);
+        out.expect("failed to deserialize");
+    }
+}
